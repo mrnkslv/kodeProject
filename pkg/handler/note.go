@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	note "github.com/mrnkslv/kodeProject"
+	"github.com/mrnkslv/kodeProject/pkg/service"
 )
 
 func (h *Handler) createNote(c *gin.Context) {
@@ -19,6 +20,15 @@ func (h *Handler) createNote(c *gin.Context) {
 		return
 	}
 	////yandex speller logic
+	input.Description, err = service.SpellCheck(input.Description)
+	if err != nil {
+		panic(err)
+	}
+
+	input.Text, err = service.SpellCheck(input.Text)
+	if err != nil {
+		panic(err)
+	}
 
 	id, err := h.services.Note.Create(userId, input)
 	if err != nil {
