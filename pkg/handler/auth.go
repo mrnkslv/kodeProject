@@ -1,29 +1,33 @@
 package handler
 
 import (
+	"encoding/json"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	note "github.com/mrnkslv/kodeProject"
 )
 
-func (h *Handler) signUp(c *gin.Context) {
+func (h *Handler) signUp(w http.ResponseWriter, r *http.Request) {
 	var input note.User
 
-	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+	err := json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
+		newErrorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	id, err := h.services.Authorization.CreateUser(input)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newErrorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
+	response := map[string]interface{}{
 		"id": id,
-	})
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
 }
 
 type signInInput struct {
@@ -31,22 +35,25 @@ type signInInput struct {
 	Password string `json:"password" binding:"required"`
 }
 
-func (h *Handler) signIn(c *gin.Context) {
+func (h *Handler) signIn(w http.ResponseWriter, r *http.Request) {
 	var input signInInput
 
-	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+	err := json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
+		newErrorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	token, err := h.services.Authorization.GenerateToken(input.Username, input.Password)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newErrorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
+	response := map[string]interface{}{
 		"token": token,
-	})
+	}
 
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
 }
