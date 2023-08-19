@@ -9,13 +9,8 @@ CREATE TABLE users
 CREATE TABLE notes
 (
     id serial not null unique,
+    user_id integer references users (id),
     text varchar(255) not null,
     description varchar(255) not null
 );
 
-CREATE TABLE user_note 
-(
-    id serial not null unique,
-    user_id int references users(id) on delete cascade not null,
-    note_id int references notes(id) on delete cascade not null
-);

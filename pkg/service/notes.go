@@ -13,7 +13,7 @@ func NewNotesService(repo repository.Note) *NotesService {
 	return &NotesService{repo: repo}
 }
 
-func (s *NotesService) Create(userId int, note note.Note) (int, error) {
+func (s *NotesService) Create(userId int, note note.Note) (note.Note, error) {
 	return s.repo.Create(userId, note)
 }
 
