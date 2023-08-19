@@ -1,25 +1,27 @@
 package handler
 
 import (
+	"encoding/json"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	note "github.com/mrnkslv/kodeProject"
 	"github.com/mrnkslv/kodeProject/pkg/service"
 )
 
-func (h *Handler) createNote(c *gin.Context) {
-	userId, err := getUserId(c)
+func (h *Handler) createNote(w http.ResponseWriter, r *http.Request) {
+	userId, err := getUserId(w, r)
 	if err != nil {
 		return
 	}
 
 	var input note.Note
-	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+	err = json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
+		newErrorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	////yandex speller logic
+
+	// yandex speller logic
 	input.Description, err = service.SpellCheck(input.Description)
 	if err != nil {
 		panic(err)
@@ -32,31 +34,38 @@ func (h *Handler) createNote(c *gin.Context) {
 
 	id, err := h.services.Note.Create(userId, input)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newErrorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, map[string]interface{}{
+
+	response := map[string]interface{}{
 		"id": id,
-	})
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
 }
 
 type getAllNotesResponse struct {
 	Data []note.Note `json:"data"`
 }
 
-func (h *Handler) getNotes(c *gin.Context) {
-	userId, err := getUserId(c)
+func (h *Handler) getNotes(w http.ResponseWriter, r *http.Request) {
+	userId, err := getUserId(w, r)
 	if err != nil {
 		return
 	}
 
 	notes, err := h.services.Note.GetAll(userId)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newErrorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, getAllNotesResponse{
+	response := getAllNotesResponse{
 		Data: notes,
-	})
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
 }

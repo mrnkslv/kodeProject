@@ -1,7 +1,9 @@
 package handler
 
 import (
-	"github.com/gin-gonic/gin"
+	"encoding/json"
+	"net/http"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -9,7 +11,8 @@ type ErrorResponse struct {
 	Message string `json: "message"`
 }
 
-func newErrorResponse(c *gin.Context, statusCode int, message string) {
+func newErrorResponse(w http.ResponseWriter, statusCode int, message string) {
+	w.WriteHeader(statusCode)
 	logrus.Error(message)
-	c.AbortWithStatusJSON(statusCode, ErrorResponse{message})
+	json.NewEncoder(w).Encode(map[string]string{"error": message})
 }
