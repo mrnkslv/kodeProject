@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strings"
 
-	note "github.com/mrnkslv/kodeProject"
+	note "github.com/mrnkslv/kodeProject/models"
 )
 
 func SpellCheck(text string) (string, error) {

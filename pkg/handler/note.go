@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	note "github.com/mrnkslv/kodeProject"
+	note "github.com/mrnkslv/kodeProject/models"
 	"github.com/mrnkslv/kodeProject/pkg/service"
 )
 
