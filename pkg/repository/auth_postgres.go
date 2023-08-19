@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
-	note "github.com/mrnkslv/kodeProject"
+	note "github.com/mrnkslv/kodeProject/models"
 )
 
 type AuthPostgres struct {

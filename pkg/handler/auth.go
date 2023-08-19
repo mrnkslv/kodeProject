@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	note "github.com/mrnkslv/kodeProject"
+	note "github.com/mrnkslv/kodeProject/models"
 )
 
 func (h *Handler) signUp(w http.ResponseWriter, r *http.Request) {

@@ -2,7 +2,7 @@ package repository
 
 import (
 	"github.com/jmoiron/sqlx"
-	note "github.com/mrnkslv/kodeProject"
+	note "github.com/mrnkslv/kodeProject/models"
 )
 
 type Authorization interface {

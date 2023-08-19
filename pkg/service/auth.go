@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	note "github.com/mrnkslv/kodeProject"
+	note "github.com/mrnkslv/kodeProject/models"
 	"github.com/mrnkslv/kodeProject/pkg/repository"
 )
 
