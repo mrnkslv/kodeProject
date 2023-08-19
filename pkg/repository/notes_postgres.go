@@ -15,34 +15,20 @@ func NewNotePostgres(db *sqlx.DB) *NotePostgres {
 	return &NotePostgres{db: db}
 }
 
-func (r *NotePostgres) Create(userId int, note note.Note) (int, error) {
-	tx, err := r.db.Begin()
-	if err != nil {
-		return 0, err
+func (r *NotePostgres) Create(userId int, newNote note.Note) (note.Note, error) {
+	createNoteQuery := fmt.Sprintf("INSERT INTO %s (text,description,user_id) VALUES ($1,$2,$3) RETURNING id,user_id,text,description", notesTable)
+	row := r.db.QueryRow(createNoteQuery, newNote.Text, newNote.Description, userId)
+	if err := row.Scan(&newNote.Id, &newNote.UserId, &newNote.Text, &newNote.Description); err != nil {
+		return newNote, err
 	}
 
-	var id int
-	createNoteQuery := fmt.Sprintf("INSERT INTO %s (text,description) VALUES ($1,$2) RETURNING id", notesTable)
-	row := tx.QueryRow(createNoteQuery, note.Text, note.Description)
-	if err := row.Scan(&id); err != nil {
-		tx.Rollback()
-		return 0, err
-	}
-
-	createUserNoteQuery := fmt.Sprintf("INSERT INTO %s (user_id,note_id) VALUES ($1,$2)", usersNotesTable)
-	_, err = tx.Exec(createUserNoteQuery, userId, id)
-	if err != nil {
-		tx.Rollback()
-		return 0, err
-	}
-	return id, tx.Commit()
+	return newNote, nil
 
 }
 
 func (r *NotePostgres) GetAll(userId int) ([]note.Note, error) {
 	var notes []note.Note
-	query := fmt.Sprintf("SELECT n.id, n.text, n.description  FROM %s n INNER JOIN %s un on n.id=un.note_id WHERE un.user_id = $1", notesTable, usersNotesTable)
-	err := r.db.Select(&notes, query, userId)
-
+	getQuery := fmt.Sprintf("SELECT id, text, description FROM %s WHERE user_id = $1", notesTable)
+	err := r.db.Select(&notes, getQuery, userId)
 	return notes, err
 }

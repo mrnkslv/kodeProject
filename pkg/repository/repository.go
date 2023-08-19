@@ -11,7 +11,7 @@ type Authorization interface {
 }
 
 type Note interface {
-	Create(userId int, note note.Note) (int, error)
+	Create(userId int, note note.Note) (note.Note, error)
 	GetAll(userId int) ([]note.Note, error)
 }
 

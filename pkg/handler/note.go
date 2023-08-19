@@ -32,14 +32,14 @@ func (h *Handler) createNote(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	id, err := h.services.Note.Create(userId, input)
+	newNote, err := h.services.Note.Create(userId, input)
 	if err != nil {
 		newErrorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	response := map[string]interface{}{
-		"id": id,
+		"new note": newNote,
 	}
 
 	w.Header().Set("Content-Type", "application/json")

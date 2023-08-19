@@ -1,4 +1,3 @@
-DROP TABLE user_note;
 
 DROP TABLE users;
 
