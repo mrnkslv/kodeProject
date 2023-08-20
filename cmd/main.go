@@ -70,6 +70,10 @@ func main() {
 		logrus.Errorf("error occured on server shutting down: %s", err.Error())
 	}
 
+	if err := m.Down(); err != nil {
+		logrus.Fatalf("failed to make migrations down: %s", err.Error())
+	}
+
 	if err := db.Close(); err != nil {
 		logrus.Errorf("error occured on db connection close")
 	}
