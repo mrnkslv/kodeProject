@@ -30,7 +30,7 @@ docker-compose down
 
 ## Documentation
 
-Access URL examples and full documentation on REST API [here](documentation.md).
+Access request examples and full documentation on REST API [here](documentation.md).
 
 ## Dependencies
 
