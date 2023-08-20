@@ -1,6 +1,7 @@
 # notes-app
 
 * [Introduction](#introduction)
+* [Quick start](#quick start)
 * [Documentation](#documentation)
 * [Dependencies](#dependencies)
 
@@ -11,6 +12,12 @@ Notes-app API has the following functionality:
 - Log in to the application (if you have an account)
 - Create note (all the mistakes corrects automatically)
 - Get all the user's notes 
+
+## Quick start
+For quick start enter in the terminal command
+```
+docker-compose up --build
+```
 
 ## Documentation
 

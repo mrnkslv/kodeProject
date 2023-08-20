@@ -6,6 +6,9 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/golang-migrate/migrate"
+	_ "github.com/golang-migrate/migrate/database/postgres"
+	_ "github.com/golang-migrate/migrate/source/file"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
@@ -31,12 +34,23 @@ func main() {
 		Host:     viper.GetString("db.host"),
 		Port:     viper.GetString("db.port"),
 		Username: viper.GetString("db.username"),
-		Password: os.Getenv("DB_PASSWORD"),
-		DBName:   viper.GetString("db.dbname"),
-		SSLMode:  viper.GetString("db.sslmode"),
+		Password: viper.GetString("db.password"),
+		//Password: os.Getenv("DB_PASSWORD"),
+		DBName:  viper.GetString("db.dbname"),
+		SSLMode: viper.GetString("db.sslmode"),
 	})
 	if err != nil {
 		logrus.Fatalf("failed to initialize db: %s", err.Error())
+	}
+
+	m, err := migrate.New(
+		"file://schema",
+		"postgres://postgres:qwerty@db:5432/postgres?sslmode=disable")
+	if err != nil {
+		logrus.Fatalf("failed to make migrations: %s", err.Error())
+	}
+	if err := m.Up(); err != nil {
+		logrus.Fatalf("failed to make migrations up: %s", err.Error())
 	}
 	repos := repository.NewRepository(db)
 	services := service.NewService(repos)
